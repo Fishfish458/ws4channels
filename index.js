@@ -18,6 +18,7 @@ const HLS_SETUP_DELAY = 2000;
 const FRAME_RATE = process.env.FRAME_RATE || 10;
 const WS4_FREQUENCY = process.env.WS4KP_FREQUENCY || 120; 
 const WS4_VIDEO_LENGTH = process.env.WS4KP_TIME || null;
+const PERMALINK_URL = process.env.PERMALINK_URL || null;
 
 const OUTPUT_DIR = path.join(__dirname, 'output');
 const AUDIO_DIR = path.join(__dirname, 'music');
@@ -128,19 +129,24 @@ const startBrowser = async () => {
     defaultViewport: null
   });
   page = await browser.newPage();
-  await page.goto(WS4KP_URL,{ waitUntil:'networkidle2', timeout:30000 });
-  try {
-    const zipInput = await page.waitForSelector('input[placeholder="Zip or City, State"], input',{ timeout:5000 });
-    if(zipInput){
-      await zipInput.type(ZIP_CODE,{ delay:100 });
-      await waitFor(1000);
-      await page.keyboard.press('ArrowDown');
-      await waitFor(500);
-      const goButton = await page.$('button[type="submit"]');
-      if(goButton) await goButton.click(); else await zipInput.press('Enter');
-      await page.waitForSelector('div.weather-display, #weather-content',{ timeout:30000 });
-    }
-  } catch {}
+  if (PERMALINK_URL) {
+    console.log(`Using custom permalink URL: ${PERMALINK_URL}`);
+    await page.goto(PERMALINK_URL, { waitUntil: 'networkidle2', timeout: 30000 });
+  } else {
+    await page.goto(WS4KP_URL, { waitUntil: 'networkidle2', timeout: 30000 });
+    try {
+      const zipInput = await page.waitForSelector('input[placeholder="Zip or City, State"], input', { timeout: 5000 });
+      if (zipInput) {
+        await zipInput.type(ZIP_CODE, { delay: 100 });
+        await waitFor(1000);
+        await page.keyboard.press('ArrowDown');
+        await waitFor(500);
+        const goButton = await page.$('button[type="submit"]');
+        if (goButton) await goButton.click(); else await zipInput.press('Enter');
+        await page.waitForSelector('div.weather-display, #weather-content', { timeout: 30000 });
+      }
+    } catch {}
+  }
   await page.setViewport({ width:1280, height:720 });
 }
 
