@@ -106,6 +106,9 @@ Environment Variables
 	•  CHANNEL_NUMBER: Sets the channel number (default: 275)
   
   •  SHUFFLE_MUSIC: Randomize the order in which detected mp3s are played (default: false)
+  •  WS4_VIDEO_LENGTH: (OPTIONAL) Time in seconds will instead generate a video of this length 
+
+  •  WS4_FREQUENCY: Time in minutes a new video will be generated only if WS4_VIDEO_LENGTH has a value (default: 120)
 
 ## Hardware Acceleration Support
 
